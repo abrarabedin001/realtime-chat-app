@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.route";
 import { connectDB } from "./lib/db";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use(express.json());
+app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 
 app.listen(port, () => {
