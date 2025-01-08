@@ -4,18 +4,24 @@ import authRoutes from "./routes/auth.route";
 import messageRoutes from "./routes/message.route";
 import { connectDB } from "./lib/db";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
+app.use(express.json());
+app.use(cookieParser());
+app.use(cors({
+  origin: "http://localhost:5174",
+  credentials: true
+}))
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
 });
 
-app.use(express.json());
-app.use(cookieParser());
+
 app.use("/api/auth", authRoutes);
 app.use("/api/message", messageRoutes);
 
