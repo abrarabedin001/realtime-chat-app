@@ -1,4 +1,3 @@
-
 import { Request, Response, RequestHandler } from 'express';
 
 import bcrypt from 'bcrypt';
@@ -67,13 +66,12 @@ export const login: RequestHandler = async (req: Request, res: Response) => {
 }
 
 export const logout: RequestHandler = async (req: Request, res: Response) => {
-  res.send("logout route");
-
   try {
     res.clearCookie("token");
     return res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
-
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
   }
 }
 
@@ -85,8 +83,11 @@ export const updateProfile: RequestHandler = async (req: AuthenticatedRequest, r
       return res.status(400).json({ message: "Please upload a profile picture" });
     }
 
-    const updateProfile = await cloudinary.uploader.upload(profilePic)
+    const updateProfile = await cloudinary.uploader.upload(profilePic);
     const updatedUser = await User.findByIdAndUpdate(userId, { profilePic: updateProfile.secure_url }, { new: true });
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
     res.status(200).json(updatedUser);
 
   } catch (error) {
