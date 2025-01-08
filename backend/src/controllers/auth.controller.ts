@@ -97,7 +97,7 @@ export const updateProfile: RequestHandler = async (req: AuthenticatedRequest, r
 
 export const checkAuth: RequestHandler = async (req: AuthenticatedRequest, res: Response) => {
   try {
-  
+
     return res.status(200).json(req.user);
   } catch (error) {
     console.error(error);
