@@ -8,6 +8,7 @@ interface User {
   _id: string;
   fullName: string;
   email: string;
+  createdAt: string;
   profilePic: string;
 }
 
@@ -31,7 +32,7 @@ interface useAuthStoreState {
   signup: (data: { fullName: string; email: string; password: string }) => void;
   login: (data: { email: string; password: string }) => void;
   logout: () => void;
-  updateProfile: (data: { fullName: string; email: string; profilePic: string }) => void;
+  updateProfile: (data: { profilePic: string | ArrayBuffer | null }) => void;
   connectSocket: () => void;
   disconnectSocket: () => void;
 

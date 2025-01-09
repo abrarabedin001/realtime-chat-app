@@ -35,7 +35,7 @@ interface useAuthStoreState {
   updateProfile: (data: { fullName: string; email: string; profilePic: string }) => void;
   connectSocket: () => void;
   disconnectSocket: () => void;
-
+  handleImageUpload: (file: File) => Promise<string>;
 
 }
 
@@ -143,13 +143,26 @@ export const useAuthStore = create<useAuthStoreState>()(
         disconnectSocket: () => {
           if (get().socket?.connected) get()?.socket?.disconnect();
         },
+        handleImageUpload: async (file: File) => {
+          try {
+            const formData = new FormData();
+            formData.append("file", file);
+            const res = await axiosInstance.post("/upload", formData, {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            });
+            return res.data.url;
 
-
-
-
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } catch (error: any) {
+            toast.error("Image upload failed");
+            throw error;
+          }
+        },
 
       }),
-      { name: 'signInStoreMassDm' },
+      { name: 'useAuthStore' },
     ),
   ),
 );
