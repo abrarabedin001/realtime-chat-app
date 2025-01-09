@@ -5,15 +5,17 @@ import Message from '../models/message.models';
 import cloudinary from '../lib/cloudinary';
 
 
-export const getUsersForSidebar: RequestHandler = async (req: AuthenticatedRequest, res: Response) => {
+export const getUsersForSidebar = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const users = await User.find({ _id: { $ne: req.user._id } }).select("-password");
-    return res.status(200).json(users);
+    const loggedInUserId = req.user._id;
+    const filteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-password");
+
+    res.status(200).json(filteredUsers);
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Server error" });
+    console.error("Error in getUsersForSidebar: ", (error as Error).message);
+    res.status(500).json({ error: "Internal server error" });
   }
-}
+};
 
 export const getMessages: RequestHandler = async (req: AuthenticatedRequest, res: Response) => {
   try {
