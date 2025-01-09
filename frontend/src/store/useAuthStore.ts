@@ -1,6 +1,5 @@
-import { axiosInstance } from './../lib/axios';
 import { create } from "zustand"
-
+import { axiosInstance } from '../../lib/axios';
 import { io, Socket } from "socket.io-client";
 
 
@@ -12,7 +11,7 @@ interface User {
   profilePic: string;
 }
 
-const BASE_URL = "http://localhost:5001";
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : "/";
 
 
 import { devtools, persist } from 'zustand/middleware';
@@ -65,14 +64,13 @@ export const useAuthStore = create<useAuthStoreState>()(
           }
         },
         setAuthUser: (authUser: User | null) => set({ authUser }),
-        signup: async (data: { fullName: string; email: string; password: string }) => {
-          console.log("data in signup:", data);
+        signup: async (data) => {
           set({ isSigningUp: true });
           try {
             const res = await axiosInstance.post("/auth/signup", data);
             set({ authUser: res.data });
             toast.success("Account created successfully");
-            get().connectSocket();
+            // get().connectSocket();
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } catch (error: any) { // changed type to 'any'
             toast.error(error.response.data.message);
@@ -81,14 +79,14 @@ export const useAuthStore = create<useAuthStoreState>()(
           }
         },
 
-        login: async (data: { email: string; password: string }) => {
+        login: async (data) => {
           set({ isLoggingIn: true });
           try {
             const res = await axiosInstance.post("/auth/login", data);
             set({ authUser: res.data });
             toast.success("Logged in successfully");
 
-            get().connectSocket();
+            // get().connectSocket();
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } catch (error: any) { // changed type to 'any'
             toast.error(error.response.data.message);
@@ -102,13 +100,13 @@ export const useAuthStore = create<useAuthStoreState>()(
             await axiosInstance.post("/auth/logout");
             set({ authUser: null });
             toast.success("Logged out successfully");
-            get().disconnectSocket();
+            // get().disconnectSocket();
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } catch (error: any) { // changed type to 'any'
             toast.error(error.response.data.message);
           }
         },
-        updateProfile: async (data: { fullName: string; email: string; profilePic: string }) => {
+        updateProfile: async (data) => {
           set({ isUpdatingProfile: true });
           try {
             const res = await axiosInstance.put("/auth/update-profile", data);
