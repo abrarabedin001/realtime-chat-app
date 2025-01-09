@@ -7,9 +7,9 @@ import LoginPage from './pages/LoginPage'
 import SettingsPage from './pages/SettingsPage'
 import ProfilePage from './pages/ProfilePage'
 import { useEffect } from 'react'
-import { useAuthStore } from '../store/useAuthStore'
+import { useAuthStore } from './store/useAuthStore'
 import { Loader } from 'lucide-react'
-
+import { Toaster } from 'react-hot-toast'
 function App() {
     const { authUser, checkAuth, isCheckingAuth } = useAuthStore()
     useEffect(() => {
@@ -50,6 +50,7 @@ function App() {
                     }
                 />
             </Routes>
+            <Toaster />
         </>
     )
 }

@@ -7,6 +7,7 @@ import cloudinary from '../lib/cloudinary';
 import { AuthenticatedRequest } from '../middleware/auth.middleware';
 export const signup: RequestHandler = async (req: Request, res: Response) => {
   const { fullName, email, password } = req.body;
+  console.log(req.body);
   try {
     if (!fullName || !email || !password) {
       return res.status(400).json({ message: "Please enter all fields" });
