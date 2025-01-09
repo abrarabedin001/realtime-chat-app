@@ -9,7 +9,7 @@ export interface AuthenticatedRequest extends Request {
 
 export const protectRoute = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const token = req.cookies.jwt;
+    const token = req.cookies.token;
     if (!token) {
       return res.status(401).json({ message: "No token, authorization denied" });
     }
