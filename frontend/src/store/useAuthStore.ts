@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { axiosInstance } from '../../lib/axios';
+import { axiosInstance } from '../lib/axios';
 import { io, Socket } from "socket.io-client";
 
 
@@ -23,7 +23,7 @@ interface useAuthStoreState {
   isLoggingIn: boolean;
   isUpdatingProfile: boolean;
   isCheckingAuth: boolean;
-  onlineUsers: User[];
+  onlineUsers: string[];
   socket: Socket | null;
 
   checkAuth: () => void;
@@ -147,7 +147,7 @@ export const useAuthStore = create<useAuthStoreState>()(
 
 
       }),
-      { name: 'signInStoreMassDm' },
+      { name: 'userAuthStore' },
     ),
   ),
 );
