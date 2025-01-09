@@ -63,6 +63,7 @@ export const useChatStore = create<useChatStoreState>()(
           set({ isMessagesLoading: true });
           try {
             const res = await axiosInstance.get(`/messages/${userId}`);
+            console.log("res.data", res.data)
             set({ messages: res.data });
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } catch (error: any) {

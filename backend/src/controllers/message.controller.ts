@@ -23,10 +23,17 @@ export const getMessages: RequestHandler = async (req: AuthenticatedRequest, res
     const myId = req.user._id;
     const messages = await Message.find({
       $or: [
-        { sender: myId, receiver: userChatId },
-        { sender: userChatId, receiver: myId },
+        {
+          senderId: myId,
+          receiverId: userChatId
+        },
+        {
+          senderId: userChatId,
+          receiverId: myId
+        },
       ],
-    }).sort({ createdAt: 1 });
+    })
+    console.log("messages", messages);
     res.status(200).json(messages);
   } catch (error) {
     console.error(error);
