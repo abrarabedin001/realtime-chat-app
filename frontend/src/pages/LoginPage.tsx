@@ -10,7 +10,8 @@ const LoginPage = () => {
         email: '',
         password: '',
     })
-    const { login, isLoggingIn } = useAuthStore()
+    const { login, isLoggingIn,  } = useAuthStore()
+    // setIsLoggingIn(false)
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()

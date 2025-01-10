@@ -3,6 +3,7 @@ import { AuthenticatedRequest } from '../middleware/auth.middleware';
 import User from '../models/user.models';
 import Message from '../models/message.models';
 import cloudinary from '../lib/cloudinary';
+import { getReceiverSocketId, io } from '../lib/socket';
 
 
 export const getUsersForSidebar = async (req: AuthenticatedRequest, res: Response) => {
@@ -55,6 +56,11 @@ export const sendMessage: RequestHandler = async (req: AuthenticatedRequest, res
     }
     const newMessage = new Message({ senderId, receiverId, text, image: imageUrl });
     await newMessage.save();
+
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
 
     // todo: realtime functionality goes here using socket.io
     res.status(201).json(newMessage);

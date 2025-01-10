@@ -12,6 +12,7 @@ interface User {
   profilePic: string;
 }
 
+const BASE_URL = "http://localhost:5001";
 // const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : "/";
 
 
@@ -22,6 +23,7 @@ interface useAuthStoreState {
   authUser: User | null;
   isSigningUp: boolean;
   isLoggingIn: boolean;
+  setIsLoggingIn: (value: boolean) => void,
   isUpdatingProfile: boolean;
   isCheckingAuth: boolean;
   onlineUsers: string[];
@@ -42,10 +44,11 @@ interface useAuthStoreState {
 export const useAuthStore = create<useAuthStoreState>()(
   devtools(
     persist(
-      (set) => ({
+      (set, get) => ({
         authUser: null,
         isSigningUp: false,
         isLoggingIn: false,
+        setIsLoggingIn: (value) => set({ isLoggingIn: value }),
         isUpdatingProfile: false,
 
         isCheckingAuth: true,
@@ -56,7 +59,7 @@ export const useAuthStore = create<useAuthStoreState>()(
           try {
             const res = await axiosInstance.get("/auth/check")
             console.log("res.data", res.data)
-            // set({ authUser: res.data })
+            set({ authUser: res.data })
           }
           catch (err) {
             console.error("Error in checkAuth:", err)
@@ -72,7 +75,7 @@ export const useAuthStore = create<useAuthStoreState>()(
             const res = await axiosInstance.post("/auth/signup", data);
             set({ authUser: res.data });
             toast.success("Account created successfully");
-            // get().connectSocket();
+            get().connectSocket();
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } catch (error: any) { // changed type to 'any'
             toast.error(error.response.data.message);
@@ -88,7 +91,7 @@ export const useAuthStore = create<useAuthStoreState>()(
             set({ authUser: res.data });
             toast.success("Logged in successfully");
 
-            // get().connectSocket();
+            get().connectSocket();
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } catch (error: any) { // changed type to 'any'
             toast.error(error.response.data.message);
@@ -102,7 +105,7 @@ export const useAuthStore = create<useAuthStoreState>()(
             await axiosInstance.post("/auth/logout");
             set({ authUser: null });
             toast.success("Logged out successfully");
-            // get().disconnectSocket();
+            get().disconnectSocket();
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } catch (error: any) { // changed type to 'any'
             toast.error(error.response.data.message);
@@ -124,24 +127,25 @@ export const useAuthStore = create<useAuthStoreState>()(
         },
 
         connectSocket: () => {
-          // const { authUser } = get();
-          // if (!authUser || get().socket?.connected) return;
+          const { authUser } = get();
+          console.log("authUser in connectSocket: ", authUser)
+          if (!authUser || get().socket?.connected) return;
 
-          // const socket = io(BASE_URL, {
-          //   query: {
-          //     userId: authUser._id,
-          //   },
-          // });
-          // socket.connect();
+          const socket = io(BASE_URL, {
+            query: {
+              userId: authUser._id,
+            },
+          });
+          socket.connect();
 
-          // set({ socket: socket });
+          set({ socket: socket });
 
-          // socket.on("getOnlineUsers", (userIds) => {
-          //   set({ onlineUsers: userIds });
-          // });
+          socket.on("getOnlineUsers", (userIds) => {
+            set({ onlineUsers: userIds });
+          });
         },
         disconnectSocket: () => {
-          // if (get().socket?.connected) get()?.socket?.disconnect();
+          if (get().socket?.connected) get()?.socket?.disconnect();
         },
 
 

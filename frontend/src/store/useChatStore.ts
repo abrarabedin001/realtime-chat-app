@@ -17,6 +17,7 @@ interface Message { _id: string, message: string, createdAt: string, updatedAt: 
 
 import { devtools, persist } from 'zustand/middleware';
 import toast from "react-hot-toast";
+import { useAuthStore } from "./useAuthStore";
 
 interface useChatStoreState {
   messages: Message[];
@@ -88,21 +89,21 @@ export const useChatStore = create<useChatStoreState>()(
           const { selectedUser } = get();
           if (!selectedUser) return;
 
-          // const socket = useAuthStore.getState().socket;
+          const socket = useAuthStore.getState().socket;
 
-          // socket.on("newMessage", (newMessage) => {
-          //   const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
-          //   if (!isMessageSentFromSelectedUser) return;
+          socket?.on("newMessage", (newMessage) => {
+            const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
+            if (!isMessageSentFromSelectedUser) return;
 
-          //   set({
-          //     messages: [...get().messages, newMessage],
-          //   });
-          // });
+            set({
+              messages: [...get().messages, newMessage],
+            });
+          });
         },
 
         unsubscribeFromMessages: () => {
-          // const socket = useAuthStore.getState().socket;
-          // socket.off("newMessage");
+          const socket = useAuthStore.getState().socket;
+          socket?.off("newMessage");
         },
 
         setSelectedUser: (selectedUser: User | null) => set({ selectedUser }),
